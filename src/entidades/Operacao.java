@@ -1,6 +1,10 @@
-import java.time.LocalDateTime;
+package entidades;
 
-public class Operacao implements Comparable<Operacao>{
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Objects;
+
+public class Operacao implements Comparable<Operacao> {
 
     private int numAgencia;
     private int numConta;
@@ -78,11 +82,38 @@ public class Operacao implements Comparable<Operacao>{
 
     @Override
     public int compareTo(Operacao o) {
-        return o.dataHoraOperacao.compareTo(this.dataHoraOperacao);
+        int comp = this.nomeTitular.compareTo(o.nomeTitular);
+        if(comp == 0)
+        {
+            comp = this.dataHoraOperacao.compareTo(o.dataHoraOperacao);
+        }
+        return comp;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Operacao operacao)) return false;
+        return numAgencia == operacao.numAgencia && numConta == operacao.numConta && Double.compare(valorOperacao, operacao.valorOperacao) == 0 && Objects.equals(nomeBanco, operacao.nomeBanco) && Objects.equals(nomeTitular, operacao.nomeTitular) && Objects.equals(tipoOperacao, operacao.tipoOperacao) && Objects.equals(dataHoraOperacao, operacao.dataHoraOperacao);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(numAgencia, numConta, nomeBanco, nomeTitular, tipoOperacao, dataHoraOperacao, valorOperacao);
     }
 
     @Override
     public String toString() {
-        return String.format("%-10d%-10d%-10s%-20s%-10s%-10s%-10.2f", numAgencia, numConta, nomeBanco, nomeTitular, tipoOperacao, dataHoraOperacao, valorOperacao);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String dataHora = dataHoraOperacao.format(dtf);
+
+        return String.format("%-10d %-10d %-12s %-15s %-10s %-20s %-20.2f",
+                numAgencia,
+                numConta,
+                nomeBanco,
+                nomeTitular,
+                tipoOperacao,
+                dataHora,
+                valorOperacao);
+
     }
 }
